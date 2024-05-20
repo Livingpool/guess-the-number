@@ -2,34 +2,20 @@ package router
 
 import (
 	"net/http"
-	"path"
 
 	"github.com/Livingpool/handler"
-	"github.com/Livingpool/web"
+	"github.com/Livingpool/views"
 )
-
-type Count struct {
-	Count int
-}
 
 func Init() *http.ServeMux {
 	router := http.NewServeMux()
-	handler := &handler.GameHandler{}
+	handler := handler.NewGameHandler(views.NewTemplates())
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
-	})
+	css := http.FileServer(http.Dir("./views/css"))
+	router.Handle("/styles/", http.StripPrefix("/styles/", css))
 
-	count := Count{Count: 0}
-	router.HandleFunc("GET /count", func(w http.ResponseWriter, r *http.Request) {
-		count.Count++
-		fp := path.Join("web", "home.html")
-		if err := web.Render(w, fp, count); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	})
-
-	router.HandleFunc("POST /newgame", handler.NewGame)
+	router.HandleFunc("GET /home", handler.Home)
+	router.HandleFunc("POST /new", handler.NewGame)
 
 	return router
 }

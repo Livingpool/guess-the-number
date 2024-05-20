@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/Livingpool/middleware"
@@ -21,5 +22,5 @@ func main() {
 	}
 
 	fmt.Println("Server listening on port 42069")
-	server.ListenAndServe()
+	log.Fatal(server.ListenAndServe())
 }

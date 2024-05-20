@@ -1,29 +1,22 @@
-{{ block "home" . }}
+{{ block "game" . }}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Home</title>
+    <title>Game</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/home.css" rel="stylesheet">
+    <link href="styles/game.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.12"
         integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
         crossorigin="anonymous"></script>
-
 </head>
 
 <body>
-    {{ template "form" . }}
-    <hr>
-    Count {{ .Count }}
+    <div>
+        test
+    </div>
 </body>
 
 </html>
-{{ end }}
-
-{{ block "form" . }}
-<form hx-swap="outerHTML" hx-post="\newgame">
-    digits: <input type="text" name="digits" id="digits">
-</form>
 {{ end }}
