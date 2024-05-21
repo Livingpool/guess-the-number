@@ -9,16 +9,44 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: LemonChiffon;
+}
+
+.outer {
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  /* Whatever width you want */
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 4rem;
+  text-align: center;
 }
 
 h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 4rem;
+  text-align: center;
 }
 
 form {
@@ -29,9 +57,43 @@ form {
 }
 
 form input {
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 6rem;
   border-radius: 25px;
+  border: 3px solid orange;
   width: 100px;
   height: 100px;
-  font-size: 6rem;
   text-align: center;
+  margin-bottom: 20px;
+}
+
+form input:focus {
+  outline: 4px solid orange;
+}
+
+form .form-error-msg {
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2rem;
+  color: red;
+  margin-bottom: 20px;
+}
+
+form button {
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 4rem;
+  border: 2px solid orange;
+  border-radius: 5px;
+  background-color: white;
+  color: #e27c00;
+}
+
+form button:hover {
+  background-color: orange;
+  color: white;
 }

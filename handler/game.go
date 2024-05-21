@@ -19,18 +19,33 @@ func NewGameHandler(renderer *views.Templates) *GameHandler {
 	}
 }
 
+type FormData struct {
+	Digit int
+	Error string
+}
+
 func (h *GameHandler) Home(w http.ResponseWriter, r *http.Request) {
-	h.renderer.Render(w, "home", nil)
+	h.renderer.Render(w, "base", nil)
 }
 
 func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	digit, err := strconv.Atoi(r.FormValue("digit"))
 	if err != nil {
-		http.Error(w, "Invalid input", http.StatusUnprocessableEntity)
+		formData := FormData{
+			Digit: 0,
+			Error: "Input is not a digit :(",
+		}
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		h.renderer.Render(w, "form", formData)
 		return
 	}
 	if digit < 1 || digit > 10 {
-		http.Error(w, "This digit is currently not supported", http.StatusUnprocessableEntity)
+		formData := FormData{
+			Digit: 0,
+			Error: "Input is not in range :(",
+		}
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		h.renderer.Render(w, "form", formData)
 		return
 	}
 
