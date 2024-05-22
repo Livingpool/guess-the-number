@@ -2,28 +2,28 @@
 <div class="outer">
     <div class="middle">
         <div class="inner">
-            {{ template "form" . }}
+            <div id="form-container">
+                <h1>Welcome to <span style="color: orange">G</span>ue<span style="color: green">s</span><span
+                        style="color: blue">s</span> Th<span style="color: brown">e</span> N<span
+                        style="color: deepskyblue">u</span><span style="color: darkcyan">m</span>ber<span
+                        style="color: darkorchid">!</span></h1>
+                <h2>Enter a valid digit below (1-10):</h2>
+                {{ template "form" . }}
+            </div>
         </div>
     </div>
 </div>
 {{ end }}
 
 {{ define "form" }}
-<div id="form-container">
-    <h1>Welcome to <span style="color: orange">G</span>ue<span style="color: green">s</span><span
-            style="color: blue">s</span> Th<span style="color: brown">e</span> N<span
-            style="color: deepskyblue">u</span><span style="color: darkcyan">m</span>ber<span
-            style="color: darkorchid">!</span></h1>
-    <h2>Enter a valid digit below (1-10):</h2>
-    <form id="form" hx-post="\new">
+<form id="form" hx-post="\new" hx-swap="outerHTML">
 
-        <input {{ if .Digit }} value="{{ .Digit }}" {{ end }} type="text" name="digit" id="digit" placeholder="4">
+    <input {{ if .Digit }} value="{{ .Digit }}" {{ end }} type="text" name="digit" id="digit" placeholder="4">
 
-        {{ if .Error }}
-        <div id="form-error-msg">{{ .Error }}</div>
-        {{ end }}
+    {{ if .Error }}
+    <div id="form-error-msg">{{ .Error }}</div>
+    {{ end }}
 
-        <button type="submit">Create New Game</button>
-    </form>
-</div>
+    <button type="submit">Create New Game</button>
+</form>
 {{ end }}

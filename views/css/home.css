@@ -12,6 +12,19 @@ body {
   background-color: LemonChiffon;
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
 .outer {
   display: table;
   position: absolute;
@@ -69,11 +82,41 @@ form input {
   margin-bottom: 20px;
 }
 
-form input:focus {
+#form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.digit-input {
+  font-family: "Cute Font", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3rem;
+  border-radius: 20px;
+  border: 3px solid orange;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 20px;
+}
+
+form input:focus,
+.digit-input:focus {
   outline: 4px solid orange;
 }
 
-form .form-error-msg {
+form #form-error-msg {
   font-family: "Cute Font", sans-serif;
   font-weight: 400;
   font-style: normal;

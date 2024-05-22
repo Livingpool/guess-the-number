@@ -18,6 +18,7 @@
 <body>
     {{ template "home" . }}
     <script>
+        // htmx.logAll();
         document.addEventListener("DOMContentLoaded", (event) => {
             document.addEventListener("htmx:beforeSwap", (evt) => {
                 if (evt.detail.xhr.status == 422) {
@@ -25,7 +26,54 @@
                     evt.detail.isError = false;
                 }
             })
+            document.addEventListener("htmx:afterSwap", (evt) => {
+                if (evt.detail.elt.id == "form-container") {
+                    var digit = parseInt(document.getElementById("form-container").getAttribute("data-digit"));
+                    addFields(digit);
+                }
+            })
         })
+
+        // Dynamically generate input fields for game.html
+        function addFields(digit) {
+            var parent = document.createElement("div");
+            parent.id = "input-container";
+            var form = document.getElementById("form-container");
+            var container = form.insertBefore(parent, form.childNodes[2]);
+
+            for (i = 0; i < digit; i++) {
+                var input = document.createElement("input");
+                input.type = "number";
+                input.min = "0";
+                input.max = "9";
+                input.name = "digit" + (i + 1);
+                input.id = "digit" + (i + 1);
+                input.className = "digit-input";
+                container.appendChild(input);
+            }
+
+            // Allow only single digit inputs
+            var boxes = document.getElementsByClassName("digit-input");
+            console.log(boxes);
+            console.log(Array.from(boxes));
+            Array.from(boxes).forEach((box, index) => {
+                box.addEventListener("input", (event) => {
+                    if (box.value.length == 1) {
+                        // Focus on the next sibling
+                        box.nextElementSibling.focus();
+                    }
+                })
+                box.addEventListener("keyup", (event) => {
+                    console.log("box.value: ", box.value);
+                    if (event.key == "Backspace" && !box.value && index > 0) {
+                        // Focus on the previous sibling
+                        box.previousElementSibling.focus();
+                    } else if (event.key == "Enter" && box.value.length == 1) {
+                        box.nextElementSibling.focus();
+                    }
+                })
+            })
+        }
     </script>
 
 </body>

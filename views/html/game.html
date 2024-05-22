@@ -1,7 +1,15 @@
 <!--views/html/game.html-->
 
-{{ define "game"}}
-<div id="form-container" hx-swap-oob="outerHTML">
-    test
+{{ block "game" . }}
+<div id="form-container" hx-swap-oob="outerHTML" data-digit="{{ .Digit }}">
+    <h1>Number of Digits: <span style="color: darkorange">{{ .Digit }}</span></h1>
+    <button class="btn" hx-post="/check" hx-swap="afterbegin" hx-target="#table">Submit</button>
+    <table id="table" class="table">
+        <tr>
+            <th>TimeStamp</th>
+            <th>Your Guess</th>
+            <th>Result</th>
+        </tr>
+    </table>
 </div>
 {{ end }}

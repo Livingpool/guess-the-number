@@ -11,6 +11,7 @@ import (
 
 type GameHandler struct {
 	renderer *views.Templates
+	answer   string
 }
 
 func NewGameHandler(renderer *views.Templates) *GameHandler {
@@ -55,8 +56,14 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		answerStr = "0" + answerStr
 	}
 
+	h.answer = answerStr
+
+	formData := FormData{
+		Digit: digit,
+		Error: "",
+	}
 	// Execute the template
-	h.renderer.Render(w, "game", nil)
+	h.renderer.Render(w, "game", formData)
 }
 
 // func (h GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) string {
