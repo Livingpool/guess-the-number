@@ -33,6 +33,6 @@ func Logging(next http.Handler) http.Handler {
 		start := time.Now()
 		wrapped := &wrappedWriter{w, http.StatusOK}
 		next.ServeHTTP(w, r)
-		log.Println(wrapped.statusCode, r.Method, r.URL.Path, time.Since(start))
+		log.Println(r.RemoteAddr, wrapped.statusCode, r.Method, r.URL.Path, time.Since(start))
 	})
 }

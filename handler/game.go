@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"log"
 	"math"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/Livingpool/views"
 )
@@ -12,6 +15,7 @@ import (
 type GameHandler struct {
 	renderer *views.Templates
 	answer   string
+	results  GuessResults
 }
 
 func NewGameHandler(renderer *views.Templates) *GameHandler {
@@ -22,7 +26,19 @@ func NewGameHandler(renderer *views.Templates) *GameHandler {
 
 type FormData struct {
 	Digit int
+	Start string
+	End   string
 	Error string
+}
+
+type ResultRow struct {
+	TimeStamp string
+	Guess     string
+	Result    string
+}
+
+type GuessResults struct {
+	Rows []ResultRow
 }
 
 func (h *GameHandler) Home(w http.ResponseWriter, r *http.Request) {
@@ -52,33 +68,82 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 
 	answer := rand.Intn(int(math.Pow(10, float64(digit-1))))
 	answerStr := strconv.Itoa(answer)
-	for i := 0; i < digit-len(answerStr); i++ {
+	for len(answerStr) < digit {
 		answerStr = "0" + answerStr
 	}
 
 	h.answer = answerStr
 
+	start, end := "", ""
+	for range digit {
+		start += "0"
+		end += "9"
+	}
+
 	formData := FormData{
 		Digit: digit,
+		Start: start,
+		End:   end,
 		Error: "",
 	}
 	// Execute the template
 	h.renderer.Render(w, "game", formData)
 }
 
-// func (h GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) string {
-// 	a := 0
-// 	b := 0
-// 	for i := 0; i < len(guess); i++ {
-// 		if guess[i] == answer[i] {
-// 			a++
-// 		} else if strings.Contains(answer, string(guess[i])) {
-// 			b++
-// 		}
-// 	}
+func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
+	guessStr := r.URL.Query().Get("guess")
+	// Handle error cases
+	if len(guessStr) != len(h.answer) {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		row := ResultRow{
+			TimeStamp: time.Now().Format(time.DateTime),
+			Guess:     guessStr,
+			Result:    "invalid input len :(",
+		}
+		h.results.Rows = append([]ResultRow{row}, h.results.Rows...)
+		h.renderer.Render(w, "result", h.results)
+		return
+	}
 
-// 	countA := strconv.Itoa(a)
-// 	countB := strconv.Itoa(b)
+	a, b := 0, 0
+	aMap := make([]bool, len(guessStr)) // positions of a's
+	countMap := make([]int, 10)         // occurences of chars (for calc b's)
 
-// 	return countA + "a" + countB + "b"
-// }
+	for i := range 10 {
+		countMap[i] = strings.Count(h.answer, strconv.Itoa(i))
+	}
+
+	log.Println(guessStr, h.answer)
+	for i := 0; i < len(guessStr); i++ {
+		c, _ := strconv.Atoi(string(guessStr[i]))
+		if guessStr[i] == h.answer[i] {
+			if countMap[c] <= 0 {
+				b--
+				a++
+			} else {
+				a++
+				countMap[c]--
+			}
+			aMap[i] = true
+		} else {
+			if countMap[c] > 0 {
+				b++
+				countMap[c]--
+			}
+		}
+	}
+
+	countA := strconv.Itoa(a)
+	countB := strconv.Itoa(b)
+	result := countA + "a" + countB + "b"
+
+	row := ResultRow{
+		TimeStamp: time.Now().Format(time.DateTime),
+		Guess:     guessStr,
+		Result:    result,
+	}
+
+	h.results.Rows = append([]ResultRow{row}, h.results.Rows...)
+
+	h.renderer.Render(w, "result", h.results)
+}

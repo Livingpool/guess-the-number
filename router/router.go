@@ -16,6 +16,7 @@ func Init() *http.ServeMux {
 
 	router.HandleFunc("GET /home", handler.Home)
 	router.HandleFunc("POST /new", handler.NewGame)
+	router.HandleFunc("GET /check", handler.CheckGuess)
 
 	return router
 }

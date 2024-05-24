@@ -2,14 +2,33 @@
 
 {{ block "game" . }}
 <div id="form-container" hx-swap-oob="outerHTML" data-digit="{{ .Digit }}">
-    <h1>Number of Digits: <span style="color: darkorange">{{ .Digit }}</span></h1>
-    <button class="btn" hx-post="/check" hx-swap="afterbegin" hx-target="#table">Submit</button>
-    <table id="table" class="table">
-        <tr>
-            <th>TimeStamp</th>
-            <th>Your Guess</th>
-            <th>Result</th>
-        </tr>
-    </table>
+	<h1>
+		Number of Digits: <span style="color: darkorange">{{ .Digit }}</span>
+	</h1>
+	<h2>
+		Range: [<span style="color: darkgreen">{{ .Start }}</span>,
+		<span style="color: darkslateblue">{{ .End }}</span>]
+	</h2>
+
+	<button
+		id="submit-btn"
+		class="submit-btn"
+		hx-get="/check"
+		hx-swap="innerHTML"
+		hx-target="#table tbody"
+	>
+		let's go!
+	</button>
+
+	<table id="table" class="table">
+		<thead>
+			<tr>
+				<th id="timestamp">TimeStamp</th>
+				<th id="guess">Your Guess</th>
+				<th id="result">Result</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
 </div>
 {{ end }}
