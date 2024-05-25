@@ -1,13 +1,13 @@
 <!--views/html/game.html-->
 
 {{ block "game" . }}
-<div id="form-container" hx-swap-oob="outerHTML" data-digit="{{ .Digit }}">
+<div id="form-container" class="form-container" hx-swap-oob="outerHTML" data-digit="{{ .Digit }}">
 	<h1>
 		Number of Digits: <span style="color: darkorange">{{ .Digit }}</span>
 	</h1>
 	<h2>
-		Range: [<span style="color: darkgreen">{{ .Start }}</span>,
-		<span style="color: darkslateblue">{{ .End }}</span>]
+		Range: [<span style="color: green">{{ .Start }}</span>,
+		<span style="color: slateblue">{{ .End }}</span>]
 	</h2>
 
 	<button

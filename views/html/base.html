@@ -20,13 +20,10 @@
 			crossorigin="anonymous"
 		></script>
 		<script src="scripts/index.js" defer></script>
+		<script src="scripts/dark-mode.js" defer></script>
 	</head>
 
 	<body>
-		<button class="dark-mode-btn" onclick="toggleDarkMode()">
-			<img src="assets/sun.svg" alt="sun.svg"/>
-			<img src="assets/moon.svg" alt="moon.svg"/>
-		</button>
 		{{ template "home" . }}
 	</body>
 </html>

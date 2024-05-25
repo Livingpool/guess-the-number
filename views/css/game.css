@@ -1,4 +1,4 @@
-#form-container table {
+.form-container table {
 	font-size: 6rem;
 	border-spacing: 30px;
 	background-color: white;
@@ -7,30 +7,30 @@
 	width: 90%;
 }
 
-#form-container table thead {
+.form-container table thead {
 	display: table;
 	table-layout: fixed;
 	width: 100%;
 }
 
-#form-container table tbody tr {
+.form-container table tbody tr {
 	display: table;
 	table-layout: fixed;
 	width: 100%;
 }
 
-#form-container table tbody {
+.form-container table tbody {
 	display: block;
 	height: 200px;
 	overflow-y: auto;
 }
 
-#form-container table th,
-#form-container table td {
+.form-container table th,
+.form-container table td {
 	text-align: center;
 	padding: 10px;
 }
 
-#form-container table th {
-	border-bottom: 3px solid lemonchiffon;
+.form-container table th {
+	border-bottom: 3px solid transparent;
 }

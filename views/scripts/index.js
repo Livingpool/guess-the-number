@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 function addFields(digit) {
 	var parent = document.createElement("div");
 	parent.id = "input-container";
+	parent.className = "input-container";
 	var form = document.getElementById("form-container");
 	var container = form.insertBefore(parent, form.childNodes[4]);
 

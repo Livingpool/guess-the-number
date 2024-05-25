@@ -1,29 +1,61 @@
 {{ define "home" }}
 <div class="outer">
-    <div class="middle">
-        <div class="inner">
-            <div id="form-container">
-                <h1>Welcome to <span style="color: orange">G</span>ue<span style="color: green">s</span><span
-                        style="color: blue">s</span> Th<span style="color: brown">e</span> N<span
-                        style="color: deepskyblue">u</span><span style="color: darkcyan">m</span>ber<span
-                        style="color: darkorchid">!</span></h1>
-                <h2>Enter a valid digit below (1-10):</h2>
-                {{ template "form" . }}
+	<div class="middle">
+		<div class="inner">
+
+            <div class="me-container">
+                <a href="https://livingpool.github.io/portfolio/" target="_blank" rel="noreferrer">
+                    <img src="assets/tim-liu.png" alt="tim-liu"/>
+                </a>
             </div>
-        </div>
-    </div>
+
+		    <div class="slide-toggle">
+			    <input
+                    id="theme"
+                    type="checkbox"
+                    checked
+                    onchange="toggleTheme(this.checked)"
+                />
+                <label for="theme">
+                    <div><img src="assets/sun.svg" alt="sun.svg" class="sun-icon"/></div>
+                    <div><img src="assets/moon.svg" alt="moon.svg" class="moon-icon"/></div>
+                </label>
+            </div>
+            
+			<div id="form-container">
+				<h1>
+					Welcome to
+					<span style="color: orange">G</span>ue<span style="color: green">s</span
+					><span style="color: lightblue">s</span> Th<span style="color: brown">e</span> N<span
+						style="color: deepskyblue"
+						>u</span
+					><span style="color: darkcyan">m</span>ber<span style="color: orchid">!</span>
+				</h1>
+				<h2>Enter a valid digit below (1-10):</h2>
+				{{ template "form" . }}
+			</div>
+		</div>
+	</div>
 </div>
-{{ end }}
+{{ end }} 
 
 {{ define "form" }}
 <form id="form" hx-post="\new" hx-swap="outerHTML">
+	<input 
+        {{ if .Digit }} 
+            value="{{ .Digit }}" 
+        {{ end }} 
+        type="text" 
+        name="digit" 
+        id="digit" 
+        placeholder="4" 
+        autocomplete="off"
+    />
 
-    <input {{ if .Digit }} value="{{ .Digit }}" {{ end }} type="text" name="digit" id="digit" placeholder="4">
+	{{ if .Error }}
+	<div id="form-error-msg" class="form-error-msg">{{ .Error }}</div>
+	{{ end }}
 
-    {{ if .Error }}
-    <div id="form-error-msg">{{ .Error }}</div>
-    {{ end }}
-
-    <button type="submit">Create New Game</button>
+	<button type="submit">Create New Game</button>
 </form>
 {{ end }}
