@@ -14,6 +14,12 @@ func Init() *http.ServeMux {
 	css := http.FileServer(http.Dir("./views/css"))
 	router.Handle("/styles/", http.StripPrefix("/styles/", css))
 
+	assets := http.FileServer(http.Dir("./views/assets"))
+	router.Handle("/assets/", http.StripPrefix("/assets/", assets))
+
+	scripts := http.FileServer(http.Dir("./views/scripts"))
+	router.Handle("/scripts/", http.StripPrefix("/scripts/", scripts))
+
 	router.HandleFunc("GET /home", handler.Home)
 	router.HandleFunc("POST /new", handler.NewGame)
 	router.HandleFunc("GET /check", handler.CheckGuess)
