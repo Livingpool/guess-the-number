@@ -13,52 +13,59 @@ import (
 )
 
 type GameHandler struct {
-	renderer *views.Templates
-	answer   string
-	results  GuessResults
+	renderer   *views.Templates
+	playerPool *PlayerPool
 }
 
-func NewGameHandler(renderer *views.Templates) *GameHandler {
+func NewGameHandler(renderer *views.Templates, playerPool *PlayerPool) *GameHandler {
 	return &GameHandler{
-		renderer: renderer,
+		renderer:   renderer,
+		playerPool: playerPool,
 	}
 }
 
 type FormData struct {
-	Digit int
-	Start string
-	End   string
-	Error string
+	Digit    int
+	Start    string
+	End      string
+	Error    string
+	PlayerId int
 }
 
-type ResultRow struct {
+type resultRow struct {
 	TimeStamp string
 	Guess     string
 	Result    string
 }
 
-type GuessResults struct {
-	Rows []ResultRow
+type guessResults struct {
+	Rows []resultRow
 }
 
 func (h *GameHandler) Home(w http.ResponseWriter, r *http.Request) {
 	h.renderer.Render(w, "base", nil)
 }
 
+func (h *GameHandler) ReturnHome(w http.ResponseWriter, r *http.Request) {
+	h.renderer.Render(w, "home", nil)
+}
+
 func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	digit, err := strconv.Atoi(r.FormValue("digit"))
+
+	// Invalid input error
 	if err != nil {
 		formData := FormData{
-			Digit: 0,
 			Error: "Input is not a digit :(",
 		}
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		h.renderer.Render(w, "form", formData)
 		return
 	}
+
+	// Input value not in range error
 	if digit < 1 || digit > 10 {
 		formData := FormData{
-			Digit: 0,
 			Error: "Input is not in range :(",
 		}
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -72,7 +79,17 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		answerStr = "0" + answerStr
 	}
 
-	h.answer = answerStr
+	// PlayerPool full error
+	newPlayer := NewPlayer(answerStr)
+	if err = h.playerPool.AddPlayer(newPlayer); err != nil {
+		formData := FormData{
+			Error: "Server is full. Please try again later!",
+		}
+		log.Println(err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		h.renderer.Render(w, "form ", formData)
+		return
+	}
 
 	start, end := "", ""
 	for range digit {
@@ -81,27 +98,50 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	formData := FormData{
-		Digit: digit,
-		Start: start,
-		End:   end,
-		Error: "",
+		Digit:    digit,
+		Start:    start,
+		End:      end,
+		Error:    "",
+		PlayerId: newPlayer.Id,
 	}
+
+	log.Println("Player registered", newPlayer.Id)
+
 	// Execute the template
 	h.renderer.Render(w, "game", formData)
 }
 
+// TODO: handle player id errors
+// TODO: set idle timeouts
+
 func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	guessStr := r.URL.Query().Get("guess")
-	// Handle error cases
-	if len(guessStr) != len(h.answer) {
+	playerId := r.URL.Query().Get("id")
+
+	// Player id not parseable error
+	id, err := strconv.Atoi(playerId)
+	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		row := ResultRow{
+		return
+	}
+
+	// Player doesn't exist error
+	player, exists := h.playerPool.players[id]
+	if !exists {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	// Guess/Answer length not match error
+	if len(guessStr) != len(player.Answer) {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		row := resultRow{
 			TimeStamp: time.Now().Format(time.DateTime),
 			Guess:     guessStr,
 			Result:    "invalid input len :(",
 		}
-		h.results.Rows = append([]ResultRow{row}, h.results.Rows...)
-		h.renderer.Render(w, "result", h.results)
+		player.GuessResults.Rows = append([]resultRow{row}, player.GuessResults.Rows...)
+		h.renderer.Render(w, "result", player.GuessResults.Rows)
 		return
 	}
 
@@ -110,13 +150,13 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	countMap := make([]int, 10)         // occurences of chars (for calc b's)
 
 	for i := range 10 {
-		countMap[i] = strings.Count(h.answer, strconv.Itoa(i))
+		countMap[i] = strings.Count(player.Answer, strconv.Itoa(i))
 	}
 
-	log.Println(guessStr, h.answer)
+	log.Println(guessStr, player.Answer)
 	for i := 0; i < len(guessStr); i++ {
 		c, _ := strconv.Atoi(string(guessStr[i]))
-		if guessStr[i] == h.answer[i] {
+		if guessStr[i] == player.Answer[i] {
 			if countMap[c] <= 0 {
 				b--
 				a++
@@ -137,13 +177,13 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	countB := strconv.Itoa(b)
 	result := countA + "a" + countB + "b"
 
-	row := ResultRow{
+	row := resultRow{
 		TimeStamp: time.Now().Format(time.DateTime),
-		Guess:     guessStr,
+		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
 		Result:    result,
 	}
 
-	h.results.Rows = append([]ResultRow{row}, h.results.Rows...)
+	player.GuessResults.Rows = append([]resultRow{row}, player.GuessResults.Rows...)
 
-	h.renderer.Render(w, "result", h.results)
+	h.renderer.Render(w, "result", player.GuessResults)
 }

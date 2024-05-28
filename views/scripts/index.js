@@ -9,11 +9,31 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	document.addEventListener("htmx:afterSwap", (evt) => {
 		if (evt.detail.elt.id == "form-container") {
 			const digit = parseInt(
-				document
-					.getElementById("form-container")
-					.getAttribute("data-digit")
+				document.getElementById("form-container").getAttribute("data-digit")
 			);
 			addFields(digit);
+        }
+    });
+
+    // TODO: there is a werid problem where this request's elt & target are both tbody. See if i can reproduce it!
+    document.addEventListener("htmx:afterSettle", (evt) => {
+        if (evt.detail.target.id == "tbody") { 
+            const digit = document.getElementById("form-container").getAttribute("data-digit");
+            const ans = document.getElementById("tbody").rows[0].cells[2].innerText[0];
+            console.log(digit, ans);
+            if (digit == ans) {
+                Swal.fire({
+                    title: "You won the game!",                     
+                    confirmButtonText: "Return Home",
+                    showCancelButton: true,
+                    text: `The answer is ${ans}`,
+                }).then( (result) => {
+                    if (result.isConfirmed) {
+                        const btn = document.getElementById("return-btn");
+                        htmx.trigger(btn, "return");
+                    }
+                });
+            }
 		}
 	});
 	document.addEventListener("htmx:configRequest", (evt) => {
