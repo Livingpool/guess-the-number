@@ -3,7 +3,7 @@ package constants
 import "sync"
 
 const (
-	PLAYER_POOL_CAP int = 3
+	PLAYER_POOL_CAP int = 100
 )
 
 var (

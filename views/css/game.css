@@ -1,5 +1,5 @@
 .form-container table {
-	font-size: 6rem;
+	font-size: 1.5rem;
 	border-spacing: 30px;
 	background-color: white;
     color: black;
@@ -11,6 +11,10 @@
 	display: table;
 	table-layout: fixed;
 	width: 100%;
+}
+
+.form-container table thead tr th {
+    font-weight: 900 !important;
 }
 
 .form-container table tbody tr {

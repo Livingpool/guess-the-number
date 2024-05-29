@@ -58,6 +58,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		formData := FormData{
 			Error: "Input is not a digit :(",
 		}
+		w.Header().Set("HX-Retarget", "#form")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		h.renderer.Render(w, "form", formData)
 		return
@@ -68,6 +69,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		formData := FormData{
 			Error: "Input is not in range :(",
 		}
+		w.Header().Set("HX-Retarget", "#form")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		h.renderer.Render(w, "form", formData)
 		return
@@ -85,9 +87,9 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		formData := FormData{
 			Error: "Server is full. Please try again later!",
 		}
-		log.Println(err)
+		w.Header().Set("HX-Retarget", "#form")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		h.renderer.Render(w, "form ", formData)
+		h.renderer.Render(w, "form", formData)
 		return
 	}
 
@@ -111,8 +113,8 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	h.renderer.Render(w, "game", formData)
 }
 
-// TODO: handle player id errors
 // TODO: set idle timeouts
+// TODO: rate limiting middleware
 
 func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	guessStr := r.URL.Query().Get("guess")
@@ -121,27 +123,21 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	// Player id not parseable error
 	id, err := strconv.Atoi(playerId)
 	if err != nil {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	// Player doesn't exist error
 	player, exists := h.playerPool.players[id]
 	if !exists {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	// Guess/Answer length not match error
 	if len(guessStr) != len(player.Answer) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		row := resultRow{
-			TimeStamp: time.Now().Format(time.DateTime),
-			Guess:     guessStr,
-			Result:    "invalid input len :(",
-		}
-		player.GuessResults.Rows = append([]resultRow{row}, player.GuessResults.Rows...)
-		h.renderer.Render(w, "result", player.GuessResults.Rows)
+		h.renderer.Render(w, "result", player.GuessResults)
 		return
 	}
 
