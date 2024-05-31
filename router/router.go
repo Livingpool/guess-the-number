@@ -11,7 +11,7 @@ import (
 func Init() *http.ServeMux {
 	router := http.NewServeMux()
 	playerPool := handler.NewPlayerPool(constants.PLAYER_POOL_CAP)
-	handler := handler.NewGameHandler(views.NewTemplates(), playerPool)
+	handler := handler.NewGameHandler(views.NewTemplates(), playerPool, &handler.RealTimeProvider{})
 
 	css := http.FileServer(http.Dir("./views/css"))
 	router.Handle("/styles/", http.StripPrefix("/styles/", css))

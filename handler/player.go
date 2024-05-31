@@ -1,56 +1,37 @@
 package handler
 
-import (
-	"errors"
-	"sync"
+import "time"
 
-	"github.com/Livingpool/constants"
-)
+type TimeProviderInterface interface {
+	Now() time.Time
+}
+
+type RealTimeProvider struct{}
+
+func (rtp *RealTimeProvider) Now() time.Time {
+	return time.Now()
+}
 
 type Player struct {
 	Id           int
-	GuessResults guessResults
 	Answer       string
+	GuessResults guessResults
 }
 
-func NewPlayer(answer string) *Player {
-	return &Player{
-		Id:     constants.AutoInc.ID(),
-		Answer: answer,
-	}
+type FormData struct {
+	Digit    int
+	Start    string
+	End      string
+	Error    string
+	PlayerId int
 }
 
-type PlayerPool struct {
-	players  map[int]*Player
-	lock     *sync.RWMutex
-	capacity int
+type resultRow struct {
+	TimeStamp string
+	Guess     string
+	Result    string
 }
 
-func NewPlayerPool(capacity int) *PlayerPool {
-	return &PlayerPool{
-		players:  make(map[int]*Player),
-		lock:     new(sync.RWMutex),
-		capacity: capacity,
-	}
-}
-
-func (p *PlayerPool) AddPlayer(player *Player) error {
-	p.lock.Lock()
-	defer p.lock.Unlock()
-
-	// If pool is at capacity, return error
-	if len(p.players) == p.capacity {
-		return errors.New("Player pool at capacity")
-	}
-
-	p.players[player.Id] = player
-	return nil
-}
-
-func (p *PlayerPool) RemovePlayer(id int) error {
-	p.lock.Lock()
-	defer p.lock.Unlock()
-
-	delete(p.players, id)
-	return nil
+type guessResults struct {
+	Rows []resultRow
 }

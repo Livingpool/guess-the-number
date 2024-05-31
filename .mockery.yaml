@@ -1,0 +1,10 @@
+with-expecter: True
+dir: mocks
+outpkg: mocks
+packages:
+    github.com/Livingpool/handler:
+        config:
+            all: True
+    github.com/Livingpool/views:
+        config:
+            all: True

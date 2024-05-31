@@ -1,0 +1,39 @@
+name: Builds
+
+on: 
+    push: 
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: action/checkout@v4
+
+            - name: Setup Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: '1.22'
+
+            - name: Install dependencies
+              run: go get .
+
+            - name: Test with the Go CLI
+              run: go test ./...
+
+    deploy:
+        needs: test
+        name: Deploy
+        runs-on: ubuntu-latest
+
+        steps:
+
+    release:
+        needs: deploy
+        name: Release
+        runs-on: ubuntu-latest
+        

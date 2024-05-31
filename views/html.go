@@ -5,6 +5,10 @@ import (
 	"io"
 )
 
+type TemplatesInterface interface {
+	Render(w io.Writer, name string, data interface{}) error
+}
+
 type Templates struct {
 	templates *template.Template
 }

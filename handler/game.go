@@ -13,33 +13,17 @@ import (
 )
 
 type GameHandler struct {
-	renderer   *views.Templates
-	playerPool *PlayerPool
+	renderer     views.TemplatesInterface
+	playerPool   PlayerPoolInterface
+	timeProvider TimeProviderInterface
 }
 
-func NewGameHandler(renderer *views.Templates, playerPool *PlayerPool) *GameHandler {
+func NewGameHandler(renderer views.TemplatesInterface, playerPool PlayerPoolInterface, timeProvider TimeProviderInterface) *GameHandler {
 	return &GameHandler{
-		renderer:   renderer,
-		playerPool: playerPool,
+		renderer:     renderer,
+		playerPool:   playerPool,
+		timeProvider: timeProvider,
 	}
-}
-
-type FormData struct {
-	Digit    int
-	Start    string
-	End      string
-	Error    string
-	PlayerId int
-}
-
-type resultRow struct {
-	TimeStamp string
-	Guess     string
-	Result    string
-}
-
-type guessResults struct {
-	Rows []resultRow
 }
 
 func (h *GameHandler) Home(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +66,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// PlayerPool full error
-	newPlayer := NewPlayer(answerStr)
+	newPlayer := h.playerPool.NewPlayer(answerStr)
 	if err = h.playerPool.AddPlayer(newPlayer); err != nil {
 		formData := FormData{
 			Error: "Server is full. Please try again later!",
@@ -113,9 +97,6 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	h.renderer.Render(w, "game", formData)
 }
 
-// TODO: set idle timeouts
-// TODO: rate limiting middleware
-
 func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	guessStr := r.URL.Query().Get("guess")
 	playerId := r.URL.Query().Get("id")
@@ -128,7 +109,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Player doesn't exist error
-	player, exists := h.playerPool.players[id]
+	player, exists := h.playerPool.GetPlayer(id)
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -149,7 +130,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 		countMap[i] = strings.Count(player.Answer, strconv.Itoa(i))
 	}
 
-	log.Println(guessStr, player.Answer)
+	// log.Println(guessStr, player.Answer)
 	for i := 0; i < len(guessStr); i++ {
 		c, _ := strconv.Atoi(string(guessStr[i]))
 		if guessStr[i] == player.Answer[i] {
@@ -174,7 +155,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	result := countA + "a" + countB + "b"
 
 	row := resultRow{
-		TimeStamp: time.Now().Format(time.DateTime),
+		TimeStamp: h.timeProvider.Now().Format(time.DateTime),
 		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
 		Result:    result,
 	}
