@@ -35,6 +35,8 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            - uses: actions/checkout@4
+
             - id: 'auth'
               name: Authentication to Google Cloud
               uses: 'google-github-actions/auth@v2'
