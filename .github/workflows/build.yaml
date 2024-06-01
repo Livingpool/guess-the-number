@@ -26,14 +26,28 @@ jobs:
               run: go test ./...
 
     deploy:
+        permissions: 
+            contents: 'read'
+            id-token: 'write'
+
         needs: test
-        name: Deploy
+        name: Deploy to GAE
         runs-on: ubuntu-latest
 
         steps:
+            - id: 'auth'
+              name: Authentication to Google Cloud
+              uses: 'google-github-actions/auth@v2'
+              with:
+                  project-id: ${{ secrets.GAE_PROJECT_ID }}
+                  workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
 
-    release:
-        needs: deploy
-        name: Release
-        runs-on: ubuntu-latest
+            - id: 'deploy'
+              name: Deployment to GAE
+              uses: 'google-github-actions/deploy-appengine@v2'
+
+            - id: 'ouput'
+              name: Output from deployment
+              run: 'curl "${{ steps.deploy.outputs.version_url }}"'
+
         
