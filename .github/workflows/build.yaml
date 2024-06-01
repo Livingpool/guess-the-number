@@ -1,4 +1,4 @@
-name: Builds
+name: CI/CD
 
 on: 
     push: 
@@ -43,6 +43,9 @@ jobs:
               with:
                   project_id: ${{ secrets.GAE_PROJECT_ID }}
                   workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
+
+            - name: Install app-engine-go
+              run: 'gcloud components install app-engine-go'
 
             - id: 'deploy'
               name: Deployment to GAE
