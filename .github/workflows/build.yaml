@@ -20,7 +20,9 @@ jobs:
                   go-version: '1.22'
 
             - name: Install dependencies
-              run: go get ./...
+              run: | 
+                   go get ./...
+                   go get google.golang.org/appengine
 
             - name: Test with the Go CLI
               run: go test ./...
@@ -43,9 +45,6 @@ jobs:
               with:
                   project_id: ${{ secrets.GAE_PROJECT_ID }}
                   workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
-
-            - name: Install app-engine-go
-              run: 'gcloud components install app-engine-go'
 
             - id: 'deploy'
               name: Deployment to GAE
