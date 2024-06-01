@@ -41,7 +41,7 @@ jobs:
               name: Authentication to Google Cloud
               uses: 'google-github-actions/auth@v2'
               with:
-                  project-id: ${{ secrets.GAE_PROJECT_ID }}
+                  project_id: ${{ secrets.GAE_PROJECT_ID }}
                   workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
 
             - id: 'deploy'
