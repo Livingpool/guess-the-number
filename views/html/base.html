@@ -6,9 +6,9 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-		<link href="/styles/base.css" type="text/css" rel="stylesheet" />
-		<link href="/styles/home.css" type="text/css" rel="stylesheet" />
-		<link href="/styles/game.css" type="text/css" rel="stylesheet" />
+		<link href="/static/css/base.css" type="text/css" rel="stylesheet" />
+		<link href="/static/css/home.css" type="text/css" rel="stylesheet" />
+		<link href="/static/css/game.css" type="text/css" rel="stylesheet" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -21,8 +21,8 @@
 			crossorigin="anonymous"
 		></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<script src="scripts/index.js" defer></script>
-		<script src="scripts/dark-mode.js" defer></script>
+		<script src="/static/scripts/index.js" defer></script>
+		<script src="/static/scripts/dark-mode.js" defer></script>
 	</head>
 
 	<body>
@@ -32,7 +32,7 @@
 
                     <div class="me-container">
                         <a href="https://livingpool.github.io/portfolio/" target="_blank" rel="noreferrer">
-                            <img src="assets/tim-liu.png" alt="tim-liu"/>
+                            <img src="/static/assets/tim-liu.png" alt="tim-liu"/>
                         </a>
                     </div>
 
@@ -44,8 +44,8 @@
                             onchange="toggleTheme(this.checked)"
                         />
                         <label for="theme">
-                            <div><img src="assets/sun.svg" alt="sun.svg" class="sun-icon"/></div>
-                            <div><img src="assets/moon.svg" alt="moon.svg" class="moon-icon"/></div>
+                            <div><img src="/static/assets/sun.svg" alt="sun.svg" class="sun-icon"/></div>
+                            <div><img src="/static/assets/moon.svg" alt="moon.svg" class="moon-icon"/></div>
                         </label>
                     </div>
                     

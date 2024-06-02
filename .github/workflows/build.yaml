@@ -22,7 +22,6 @@ jobs:
             - name: Install dependencies
               run: | 
                    go get ./...
-                   go get google.golang.org/appengine
 
             - name: Test with the Go CLI
               run: go test ./...
@@ -39,19 +38,20 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - id: 'auth'
-              name: Authentication to Google Cloud
+            - name: Authenticate to Google Cloud
               uses: 'google-github-actions/auth@v2'
               with:
                   project_id: ${{ secrets.GAE_PROJECT_ID }}
                   workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
 
-            - id: 'deploy'
-              name: Deployment to GAE
+            - name: Set up Cloud SDK
+              uses: 'google-github-actions/setup-gcloud@v2'
+              with:
+                  version: '>= 363.0.0'
+
+            - id: Deploy to GAE
               uses: 'google-github-actions/deploy-appengine@v2'
 
-            - id: 'ouput'
-              name: Output from deployment
+            # Example of using the output
+            - id: Output
               run: 'curl "${{ steps.deploy.outputs.version_url }}"'
-
-        

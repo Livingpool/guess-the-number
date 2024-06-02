@@ -1,9 +1,16 @@
 package views
 
 import (
+	"embed"
 	"html/template"
 	"io"
 )
+
+// The go embed directive statement must be outside of function body
+// embed only works for current & sub modules (https://github.com/golang/go/issues/46056)
+
+//go:embed assets/* css/* html/* scripts/*
+var StaticFiles embed.FS
 
 type TemplatesInterface interface {
 	Render(w io.Writer, name string, data interface{}) error
