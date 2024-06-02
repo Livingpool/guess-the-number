@@ -49,9 +49,9 @@ jobs:
               with:
                   version: '>= 363.0.0'
 
-            - id: Deploy to GAE
+            - name: Deploy to GAE
               uses: 'google-github-actions/deploy-appengine@v2'
 
             # Example of using the output
-            - id: Output
+            - name: Output
               run: 'curl "${{ steps.deploy.outputs.version_url }}"'
