@@ -50,8 +50,4 @@ jobs:
                   version: '>= 363.0.0'
 
             - name: Deploy to GAE
-              uses: 'google-github-actions/deploy-appengine@v2'
-
-            # Example of using the output
-            - name: Output
-              run: 'curl "${{ steps.deploy.outputs.version_url }}"'
+              run: gcloud app deploy app.yaml --quiet --promote
