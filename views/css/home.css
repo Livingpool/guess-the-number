@@ -113,6 +113,7 @@ form button,
 	border-radius: 5px;
 	background-color: white;
 	color: #e27c00;
+	margin-top: 10px;
 	margin-bottom: 20px;
 }
 
@@ -123,4 +124,36 @@ form button:focus,
 	background-color: orange;
 	color: white;
 	outline: none;
+}
+
+@media screen and (max-width: 600px) {
+
+	.inner {
+		width: 300px;
+	}
+
+	form input {
+		font-size: 3rem;
+		width: 80px;
+		height: 80px;
+	}
+
+	.digit-input {
+		font-size: 1.5rem;
+		font-weight: 700 !important;
+		width: 30px;
+		height: 30px;
+	}
+
+	.digit-input:focus {
+		outline: 3px solid orange;
+	}
+
+	form .form-error-msg {
+		font-size: 1.5rem;
+	}
+
+	form button, .submit-btn {
+		font-size: 2rem;
+	}
 }

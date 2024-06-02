@@ -14,7 +14,7 @@
 }
 
 .form-container table thead tr th {
-    font-weight: 900 !important;
+    font-weight: 700 !important;
 }
 
 .form-container table tbody tr {
@@ -25,7 +25,7 @@
 
 .form-container table tbody {
 	display: block;
-	height: 200px;
+	height: 300px;
 	overflow-y: auto;
 }
 
@@ -37,4 +37,15 @@
 
 .form-container table th {
 	border-bottom: 3px solid transparent;
+}
+
+
+@media screen and (max-width: 600px) {
+	.form-container table {
+		width: 100%;
+	}
+
+	.form-container table tbody {
+		height: 180px;
+	}
 }

@@ -48,6 +48,7 @@ jobs:
               uses: 'google-github-actions/setup-gcloud@v2'
               with:
                   version: '>= 363.0.0'
+                  install_components: 'app-engine-go'
 
             - name: Deploy to GAE
               run: gcloud app deploy app.yaml --quiet --promote
