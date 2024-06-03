@@ -41,14 +41,8 @@ jobs:
             - name: Authenticate to Google Cloud
               uses: 'google-github-actions/auth@v2'
               with:
-                  project_id: ${{ secrets.GAE_PROJECT_ID }}
-                  workload_identity_provider: ${{ secrets.GAE_WORKLOAD_IDENTITY_PROVIDER }}
-
-            - name: Set up Cloud SDK
-              uses: 'google-github-actions/setup-gcloud@v2'
-              with:
-                  version: '>= 363.0.0'
-                  install_components: 'app-engine-go'
+                  project_id: ${secrets.GAE_PROJECT_ID}
+                  workload_identity_provider: ${secrets.GAE_WORKLOAD_IDENTITY_PROVIDER}
 
             - name: Deploy to GAE
-              run: gcloud app deploy app.yaml --quiet --promote
+              uses: 'google-github-actions/deploy-appengine@v2'
