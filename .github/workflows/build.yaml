@@ -41,7 +41,7 @@ jobs:
             - name: Authenticate to Google Cloud
               uses: 'google-github-actions/auth@v2'
               with:
-                  project_id: ${secrets.GAE_PROJECT_ID}
+                  service_account: guess-the-number-425013@appspot.gserviceaccount.com
                   workload_identity_provider: ${secrets.GAE_WORKLOAD_IDENTITY_PROVIDER}
 
             - name: Deploy to GAE
