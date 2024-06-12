@@ -56,4 +56,4 @@ jobs:
               run: 'gcloud components list'
 
             - name: Deploy to GAE
-              run: 'gcloud app deploy --promote'
+              uses: 'google-github-actions/deploy-appengine@v2'
