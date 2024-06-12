@@ -44,5 +44,8 @@ jobs:
                   project_id: 'guess-the-number-425013'
                   workload_identity_provider: 'projects/1041356889556/locations/global/workloadIdentityPools/github/providers/my-repo'
 
+            - name: Set up Cloud SDK
+              uses: 'google-github-actions/setup-gcloud@v2'
+
             - name: Deploy to GAE
               uses: 'google-github-actions/deploy-appengine@v2'
