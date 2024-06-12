@@ -46,12 +46,14 @@ jobs:
 
             - name: Set up Cloud SDK
               uses: 'google-github-actions/setup-gcloud@v2'
+              with:
+                  install_components: 'app-engine-go'
 
             - name: Use gcloud CLI
               run: 'gcloud info'
 
             - name: List components
-              run: 'gcloud component list'
+              run: 'gcloud components list'
 
             - name: Deploy to GAE
               run: 'gcloud app deploy --promote'
