@@ -41,8 +41,8 @@ jobs:
             - name: Authenticate to Google Cloud
               uses: 'google-github-actions/auth@v2'
               with:
-                  service_account: guess-the-number-425013@appspot.gserviceaccount.com
-                  workload_identity_provider: ${secrets.GAE_WORKLOAD_IDENTITY_PROVIDER}
+                  project_id: 'guess-the-number-425013'
+                  workload_identity_provider: 'projects/1041356889556/locations/global/workloadIdentityPools/github/providers/my-repo'
 
             - name: Deploy to GAE
               uses: 'google-github-actions/deploy-appengine@v2'
