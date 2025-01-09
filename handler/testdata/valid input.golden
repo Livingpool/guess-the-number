@@ -1,11 +1,11 @@
 
-    <div id="form-container" class="form-container" data-digit="9">
+    <div id="form-container" class="form-container" data-digit="8">
         <h1>
-            Number of Digits: <span style="color: darkorange">9</span>
+            Number of Digits: <span style="color: darkorange">8</span>
         </h1>
         <h2>
-            Range: [<span style="color: green">000000000</span>,
-            <span style="color: slateblue">999999999</span>]
+            Range: [<span style="color: green">10000000</span>,
+            <span style="color: slateblue">99999999</span>]
         </h2>
 
         <button

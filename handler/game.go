@@ -49,7 +49,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Input value not in range error
-	if digit < 1 || digit > 10 {
+	if digit < 1 || digit > 8 {
 		formData := FormData{
 			Error: "Input is not in range :(",
 		}
@@ -59,11 +59,9 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	answer := rand.Intn(int(math.Pow(10, float64(digit-1))))
+	lower, upper := calcRange(digit)
+	answer := genRandInt(lower, upper)
 	answerStr := strconv.Itoa(answer)
-	for len(answerStr) < digit {
-		answerStr = "0" + answerStr
-	}
 
 	// PlayerPool full error
 	newPlayer := h.playerPool.NewPlayer(answerStr)
@@ -77,16 +75,10 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, end := "", ""
-	for range digit {
-		start += "0"
-		end += "9"
-	}
-
 	formData := FormData{
 		Digit:    digit,
-		Start:    start,
-		End:      end,
+		Start:    strconv.Itoa(lower),
+		End:      strconv.Itoa(upper),
 		Error:    "",
 		PlayerId: newPlayer.Id,
 	}
@@ -163,4 +155,20 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	player.GuessResults.Rows = append([]resultRow{row}, player.GuessResults.Rows...)
 
 	h.renderer.Render(w, "result", player.GuessResults)
+}
+
+// Returns [lower, upper] from given digit
+func calcRange(digit int) (int, int) {
+	if digit == 1 {
+		return 0, 9
+	}
+	upper, _ := strconv.Atoi(strings.Repeat("9", digit))
+	return int(math.Pow(10, float64(digit-1))), upper
+}
+
+// Generate a pseudo random number with range [lower, upper]
+func genRandInt(lower, upper int) int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	num := r.Intn(upper-lower) + lower
+	return num
 }

@@ -31,7 +31,7 @@ func TestNewGame(t *testing.T) {
 		{"non alnum input", "!", 422},
 		{"lower than range input", "0", 422},
 		{"higher than range input", "15", 422},
-		{"valid input", "9", 200},
+		{"valid input", "8", 200},
 	}
 
 	mockTemplates.On(
@@ -58,7 +58,7 @@ func TestNewGame(t *testing.T) {
 	g := goldie.New(t)
 
 	for _, tc := range testcases {
-		t.Run(tc.digit, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, "/home?digit="+tc.digit, nil)
 
