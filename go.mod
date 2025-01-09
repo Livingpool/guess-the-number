@@ -2,7 +2,10 @@ module github.com/Livingpool
 
 go 1.22.3
 
-require github.com/stretchr/testify v1.9.0
+require (
+	github.com/stretchr/testify v1.9.0
+	golang.org/x/crypto v0.32.0
+)
 
 require github.com/sergi/go-diff v1.0.0 // indirect
 
