@@ -1,4 +1,4 @@
-package handler
+package service
 
 import "time"
 
@@ -15,7 +15,7 @@ func (rtp *RealTimeProvider) Now() time.Time {
 type Player struct {
 	Id           int
 	Answer       string
-	GuessResults guessResults
+	GuessResults GuessResults
 }
 
 type FormData struct {
@@ -26,12 +26,12 @@ type FormData struct {
 	PlayerId int
 }
 
-type resultRow struct {
+type ResultRow struct {
 	TimeStamp string
 	Guess     string
 	Result    string
 }
 
-type guessResults struct {
-	Rows []resultRow
+type GuessResults struct {
+	Rows []ResultRow
 }

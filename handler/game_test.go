@@ -11,6 +11,7 @@ import (
 
 	"github.com/Livingpool/handler"
 	"github.com/Livingpool/mocks"
+	"github.com/Livingpool/service"
 	"github.com/sebdah/goldie/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -48,7 +49,7 @@ func TestNewGame(t *testing.T) {
 	mockPlayerPool.On(
 		"NewPlayer",
 		mock.AnythingOfType("string"),
-	).Return(new(handler.Player)).Times(len(testcases))
+	).Return(new(service.Player)).Times(len(testcases))
 
 	mockPlayerPool.On(
 		"AddPlayer",
@@ -109,7 +110,7 @@ func TestCheckGuess(t *testing.T) {
 
 	for _, tc := range testcases {
 		if tc.statusCode != 404 {
-			newPlayer := new(handler.Player)
+			newPlayer := new(service.Player)
 			newPlayer.Answer = tc.answer
 			newPlayer.Id, _ = strconv.Atoi(tc.playerId)
 			mockPlayerPool.On(

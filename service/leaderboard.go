@@ -12,7 +12,6 @@ import (
 )
 
 type LeaderboardInterface interface {
-	Init() error
 	Insert(ctx context.Context, data Record) error
 	Get(ctx context.Context, boardId int, name string) ([]Record, error)
 	Close() error
@@ -23,30 +22,27 @@ type Leaderboard struct {
 }
 
 type Record struct {
-	Digits   int
-	Name     string
-	Attempts int
+	Digits   int    `json:"digits"`
+	Name     string `json:"name"`
+	Attempts int    `json:"attempts"`
 }
 
-func (lb *Leaderboard) Init() error {
+func NewLeaderboard() *Leaderboard {
 	db, err := sql.Open("sqlite3", "./leaderboards.db")
 	if err != nil {
-		return err
+		panic(err)
 	}
-	defer db.Close()
 
 	var sqlStmt string
 	for i := constants.DIGIT_LOWER_LIMIT; i <= constants.DIGIT_UPPER_LIMIT; i++ {
-		stmt := fmt.Sprintf("create table board%d (id integer primary key, name text unique, attempts integer);", i)
+		stmt := fmt.Sprintf("create table if not exists board%d (id integer primary key, name text unique, attempts integer);", i)
 		sqlStmt += stmt
 	}
 
 	if _, err = db.Exec(sqlStmt); err != nil {
-		return err
+		panic(err)
 	}
-
-	lb.DB = db
-	return nil
+	return &Leaderboard{db}
 }
 
 // inserts a record in the corresponding board if it doesn't already exists, otherwise updates it
@@ -117,6 +113,7 @@ func (lb *Leaderboard) Get(ctx context.Context, boardId int, name string) ([]Rec
 	return result, nil
 }
 
+// there is generally no need to close the db connection
 func (lb *Leaderboard) Close() error {
 	return lb.DB.Close()
 }

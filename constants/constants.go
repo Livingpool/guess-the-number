@@ -3,22 +3,29 @@ package constants
 import "sync"
 
 const (
-	PLAYER_POOL_CAP int = 100
+	PLAYER_POOL_CAP      int = 100
+	DIGIT_LOWER_LIMIT    int = 1
+	DIGIT_UPPER_LIMIT    int = 8
+	MAX_ROWS_DISPLAYED   int = 10
+	LEADERBOARD_MAX_ROWS int = 100 // not used for now
 )
 
-var (
-	AutoInc autoInc
-)
+type AutoInc struct {
+	lock *sync.Mutex
+	id   int
+}
 
-type autoInc struct {
-	sync.Mutex
-	id int
+func NewAutoInc() *AutoInc {
+	return &AutoInc{
+		&sync.Mutex{},
+		0,
+	}
 }
 
 // Function for generating auto incrementing id.
-func (a *autoInc) ID() (id int) {
-	a.Lock()
-	defer a.Unlock()
+func (a *AutoInc) ID() (id int) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 
 	id = a.id
 	a.id++

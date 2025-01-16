@@ -1,10 +1,10 @@
-with-expecter: True
+with-expecter: true
 dir: mocks
 outpkg: mocks
 packages:
-    github.com/Livingpool/handler:
+    github.com/Livingpool/service:
         config:
-            all: True
+            all: true
     github.com/Livingpool/views:
         config:
-            all: True
+            all: true

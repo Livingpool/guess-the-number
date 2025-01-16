@@ -1,7 +1,8 @@
 package handler
 
 import (
-	"log"
+	"fmt"
+	"log/slog"
 	"math"
 	"math/rand"
 	"net/http"
@@ -9,16 +10,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Livingpool/constants"
+	"github.com/Livingpool/service"
 	"github.com/Livingpool/views"
 )
 
 type GameHandler struct {
 	renderer     views.TemplatesInterface
-	playerPool   PlayerPoolInterface
-	timeProvider TimeProviderInterface
+	playerPool   service.PlayerPoolInterface
+	timeProvider service.TimeProviderInterface
 }
 
-func NewGameHandler(renderer views.TemplatesInterface, playerPool PlayerPoolInterface, timeProvider TimeProviderInterface) *GameHandler {
+func NewGameHandler(renderer views.TemplatesInterface, playerPool service.PlayerPoolInterface, timeProvider service.TimeProviderInterface) *GameHandler {
 	return &GameHandler{
 		renderer:     renderer,
 		playerPool:   playerPool,
@@ -39,7 +42,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 
 	// Invalid input error
 	if err != nil {
-		formData := FormData{
+		formData := service.FormData{
 			Error: "Input is not a digit :(",
 		}
 		w.Header().Set("HX-Retarget", "#form")
@@ -49,8 +52,8 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Input value not in range error
-	if digit < 1 || digit > 8 {
-		formData := FormData{
+	if digit < constants.DIGIT_LOWER_LIMIT || digit > constants.DIGIT_UPPER_LIMIT {
+		formData := service.FormData{
 			Error: "Input is not in range :(",
 		}
 		w.Header().Set("HX-Retarget", "#form")
@@ -66,7 +69,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 	// PlayerPool full error
 	newPlayer := h.playerPool.NewPlayer(answerStr)
 	if err = h.playerPool.AddPlayer(newPlayer); err != nil {
-		formData := FormData{
+		formData := service.FormData{
 			Error: "Server is full. Please try again later!",
 		}
 		w.Header().Set("HX-Retarget", "#form")
@@ -75,7 +78,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formData := FormData{
+	formData := service.FormData{
 		Digit:    digit,
 		Start:    strconv.Itoa(lower),
 		End:      strconv.Itoa(upper),
@@ -83,7 +86,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		PlayerId: newPlayer.Id,
 	}
 
-	log.Println("Player registered", newPlayer.Id)
+	slog.Info(fmt.Sprintf("player registered: %d", newPlayer.Id))
 
 	// Execute the template
 	h.renderer.Render(w, "game", formData)
@@ -104,6 +107,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	player, exists := h.playerPool.GetPlayer(id)
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
+		slog.Error(fmt.Sprintf("player %d doesn't exist", id))
 		return
 	}
 
@@ -146,13 +150,13 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	countB := strconv.Itoa(b)
 	result := countA + "a" + countB + "b"
 
-	row := resultRow{
+	row := service.ResultRow{
 		TimeStamp: h.timeProvider.Now().Format(time.DateTime),
 		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
 		Result:    result,
 	}
 
-	player.GuessResults.Rows = append([]resultRow{row}, player.GuessResults.Rows...)
+	player.GuessResults.Rows = append([]service.ResultRow{row}, player.GuessResults.Rows...)
 
 	h.renderer.Render(w, "result", player.GuessResults)
 }

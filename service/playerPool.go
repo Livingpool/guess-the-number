@@ -1,4 +1,4 @@
-package handler
+package service
 
 import (
 	"errors"
@@ -15,22 +15,24 @@ type PlayerPoolInterface interface {
 }
 
 type PlayerPool struct {
-	players  map[int]*Player
-	lock     *sync.RWMutex
-	capacity int
+	players   map[int]*Player
+	lock      *sync.RWMutex
+	capacity  int
+	autoIncId *constants.AutoInc
 }
 
 func NewPlayerPool(capacity int) *PlayerPool {
 	return &PlayerPool{
-		players:  make(map[int]*Player),
-		lock:     new(sync.RWMutex),
-		capacity: capacity,
+		players:   make(map[int]*Player),
+		lock:      new(sync.RWMutex),
+		capacity:  capacity,
+		autoIncId: constants.NewAutoInc(),
 	}
 }
 
 func (p *PlayerPool) NewPlayer(answer string) *Player {
 	return &Player{
-		Id:     constants.AutoInc.ID(),
+		Id:     p.autoIncId.ID(),
 		Answer: answer,
 	}
 }
