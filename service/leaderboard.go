@@ -80,7 +80,7 @@ func (lb *Leaderboard) Get(ctx context.Context, boardId int, name string) ([]Rec
 		return nil, fmt.Errorf("board id out of range")
 	}
 
-	rows, err := lb.DB.QueryContext(ctx, fmt.Sprintf("select name, attempts from board%d order by attempts desc limit %d", boardId, constants.MAX_ROWS_DISPLAYED))
+	rows, err := lb.DB.QueryContext(ctx, fmt.Sprintf("select name, attempts from board%d order by attempts limit %d", boardId, constants.MAX_ROWS_DISPLAYED))
 	if err != nil {
 		return nil, err
 	}

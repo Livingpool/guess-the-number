@@ -25,7 +25,10 @@ func (t *Templates) Render(w io.Writer, name string, data interface{}) error {
 }
 
 func NewTemplates() *Templates {
+	funcMap := template.FuncMap{
+		"dec": func(i int) int { return i - 1 },
+	}
 	return &Templates{
-		templates: template.Must(template.ParseGlob("./views/html/*.html")),
+		templates: template.Must(template.New("example").Funcs(funcMap).ParseGlob("./views/html/*.html")),
 	}
 }
