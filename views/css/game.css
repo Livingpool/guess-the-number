@@ -1,16 +1,16 @@
 .form-container table {
-	font-size: 1.5rem;
-	border-spacing: 30px;
-	background-color: white;
+    font-size: 1.5rem;
+    border-spacing: 30px;
+    background-color: white;
     color: black;
-	border-collapse: collapse;
-	width: 90%;
+    border-collapse: collapse;
+    width: 90%;
 }
 
 .form-container table thead {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
 }
 
 .form-container table thead tr th {
@@ -18,34 +18,94 @@
 }
 
 .form-container table tbody tr {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
 }
 
 .form-container table tbody {
-	display: block;
-	height: 300px;
-	overflow-y: auto;
+    display: block;
+    height: 300px;
+    overflow-y: auto;
 }
 
 .form-container table th,
 .form-container table td {
-	text-align: center;
-	padding: 10px;
+    text-align: center;
+    padding: 10px;
 }
 
 .form-container table th {
-	border-bottom: 3px solid transparent;
+    border-bottom: 3px solid transparent;
 }
 
+.game-btn-container {
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.game-btn-container button {
+    background-color: transparent;
+    border: none;
+    color: orange;
+    font-size: 2rem;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+[data-theme='dark'] .game-btn-container button:hover,
+[data-theme='dark'] .game-btn-container button:focus {
+    color: #ffd580;
+}
+
+[data-theme='light'] .game-btn-container button:hover,
+[data-theme='light'] .game-btn-container button:focus {
+    color: #ff8c00;
+}
+
+/* 
+ * leaderboard popup
+*/
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
 
 @media screen and (max-width: 600px) {
-	.form-container table {
-		width: 100%;
-	}
+    .form-container table {
+        width: 100%;
+    }
 
-	.form-container table tbody {
-		height: 180px;
-	}
+    .form-container table tbody {
+        height: 180px;
+    }
+
+    .game-btn-container button {
+        font-size: 1.5rem;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
 }
+
