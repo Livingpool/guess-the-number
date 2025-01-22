@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             evt.detail.isError = false;
             if (evt.detail.target.id == 'tbody') {
                 Swal.fire({
-                    title: 'Invalid input length',
+                    title: 'u entered the wrong digits',
                     icon: 'warning',
                     confirmButtonText: 'OK',
                 });
@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // handle player id not found
             evt.detail.isError = false;
             Swal.fire({
-                title: 'Player not found',
+                title: 'i couldnt find your id',
                 icon: 'error',
                 confirmButtonText: 'Return Home',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
             }).then(() => {
                 const btn = document.getElementById('return-btn');
-                htmx.trigger(btn, 'return');
+                htmx.trigger(btn, 'click');
             });
         }
     });
@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
+// sweetalert2 notify game result and save record
 async function notifyResult(ans) {
     const { value: name } = await Swal.fire({
         title: 'you won the game!',
@@ -98,11 +99,17 @@ async function notifyResult(ans) {
         text: `the answer is ${ans}`,
         inputValidator: (value) => {
             if (!value) {
-                return 'name cannot be empty!';
+                return 'just gimme a name bro';
             }
         },
     });
-    if (name) {
+
+    const existingName = document
+        .getElementById('form-container')
+        .getAttribute('name');
+
+    if (name && !existingName) {
+        // save record in db
         fetch(window.location.origin + '/save-record', {
             method: 'POST',
             body: JSON.stringify({
@@ -113,8 +120,21 @@ async function notifyResult(ans) {
             headers: {
                 'Content-Type': 'application/json',
             },
-        })
-            //.then((resp) => console.log(resp))
-            .catch((err) => console.error(err));
+        }).catch((err) => console.error(err));
+        document.getElementById('form-container').setAttribute('name', name);
+    } else if (name && existingName && name != existingName) {
+        // degenerates spamming my ass
+        await Swal.fire({
+            title: 'dont spam names okay?',
+            icon: 'warning',
+            confirmButtonText: 'im a good cat',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const btn = document.getElementById('return-btn');
+                htmx.trigger(btn, 'click');
+            }
+        });
+    } else {
+        // enter same name same result so no api call
     }
 }
