@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // handle player id not found
             evt.detail.isError = false;
             Swal.fire({
-                title: 'i couldnt find your id',
+                title: 'i couldnt find your id sorry',
                 icon: 'error',
                 confirmButtonText: 'Return Home',
                 allowOutsideClick: false,
@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     .getAttribute('data-digit')
             );
             addFields(digit);
+        } else if (evt.detail.elt.id == 'popup-leaderboard') {
+            openPopup();
         }
     });
 
@@ -110,12 +112,17 @@ async function notifyResult(ans) {
 
     if (name && !existingName) {
         // save record in db
+        const digit = parseInt(
+            document.getElementById('form-container').getAttribute('data-digit')
+        );
+        const attempts = document.getElementById('table').rows.length;
+
         fetch(window.location.origin + '/save-record', {
             method: 'POST',
             body: JSON.stringify({
-                digits: 4,
+                digits: digit,
                 name: name,
-                attempts: 4,
+                attempts: attempts,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -135,6 +142,6 @@ async function notifyResult(ans) {
             }
         });
     } else {
-        // enter same name same result so no api call
+        // enter same name, same (or worse) result so no api call
     }
 }

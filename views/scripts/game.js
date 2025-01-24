@@ -17,9 +17,11 @@ function addFields(digit) {
         container.appendChild(input);
     }
 
-    // allow only single digit inputs
     var boxes = document.getElementsByClassName('digit-input');
     var secondPress = false;
+    document.getElementById('digit1').focus();
+
+    // allow only single digit inputs
     Array.from(boxes).forEach((box, index, array) => {
         box.addEventListener('input', (event) => {
             if (box.value.length == 1 && index != array.length - 1) {

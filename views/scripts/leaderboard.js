@@ -10,11 +10,11 @@ function insertIndex() {
 }
 
 function openPopup() {
-    document.getElementById('overlay').style.display = 'block';
-    document.getElementById('popup').style.display = 'block';
+    document.getElementById('overlay-leaderboard').style.display = 'block';
+    document.getElementById('popup-leaderboard').style.display = 'block';
 }
 
 function closePopup() {
-    document.getElementById('overlay').style.display = 'none';
-    document.getElementById('popup').style.display = 'none';
+    document.getElementById('overlay-leaderboard').style.display = 'none';
+    document.getElementById('popup-leaderboard').style.display = 'none';
 }

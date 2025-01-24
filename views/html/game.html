@@ -43,7 +43,18 @@
         >
             home
         </button>
-        <button id="leaderboard-btn" hx-get="/show-board">leaderboard</button>
+        <button
+            id="leaderboard-btn"
+            hx-get="/show-board"
+            hx-target="#popup-leaderboard"
+        >
+            leaderboard
+        </button>
+    </div>
+
+    <div id="overlay-leaderboard" class="overlay">
+        <div id="popup-leaderboard" class="popup"></div>
+        <button id="close-leaderboard-btn" onclick="closePopup()">close</button>
     </div>
 </div>
 {{ end }}
