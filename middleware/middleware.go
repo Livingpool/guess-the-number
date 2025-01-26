@@ -1,10 +1,21 @@
 package middleware
 
 import (
-	"log"
+	"context"
+	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
+
+	"github.com/Livingpool/utils"
+	"github.com/google/uuid"
 )
+
+type LoggingConfig struct {
+	DefaultLevel     slog.Level
+	ServerErrorLevel slog.Level
+	ClientErrorLevel slog.Level
+}
 
 type Middleware func(http.Handler) http.Handler
 
@@ -28,17 +39,40 @@ func (w *wrappedWriter) WriteHeader(code int) {
 	w.ResponseWriter.WriteHeader(code)
 }
 
-func Logging(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+func Logging(logger *slog.Logger, config LoggingConfig) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+			reqId := uuid.New().String()
 
-		wrapped := &wrappedWriter{
-			ResponseWriter: w,
-			statusCode:     http.StatusOK,
-		}
+			wrapped := &wrappedWriter{
+				ResponseWriter: w,
+				statusCode:     http.StatusOK,
+			}
 
-		next.ServeHTTP(wrapped, r)
+			r = r.WithContext(context.WithValue(r.Context(), "reqId", reqId))
 
-		log.Println(r.RemoteAddr, wrapped.statusCode, r.Method, r.URL.Path, time.Since(start))
-	})
+			next.ServeHTTP(wrapped, r)
+
+			level := config.DefaultLevel
+			if wrapped.statusCode >= http.StatusInternalServerError {
+				level = config.ServerErrorLevel
+			} else if wrapped.statusCode >= http.StatusBadRequest {
+				level = config.ClientErrorLevel
+			}
+
+			defer func() {
+				logger.LogAttrs(
+					r.Context(),
+					level,
+					strconv.Itoa(wrapped.statusCode),
+					slog.String("reqId", reqId),
+					slog.String("ip", utils.ReadUserIP(r).String()),
+					slog.String("method", r.Method),
+					slog.String("path", r.URL.Path),
+					slog.Duration("timeSpent", time.Since(start)),
+				)
+			}()
+		})
+	}
 }

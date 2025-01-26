@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -11,11 +12,20 @@ import (
 )
 
 func main() {
-	router := router.Init()
+	h := slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{})
+	logger := slog.New(h)
+
+	config := middleware.LoggingConfig{
+		DefaultLevel:     slog.LevelInfo,
+		ServerErrorLevel: slog.LevelError,
+		ClientErrorLevel: slog.LevelWarn,
+	}
 
 	stack := middleware.CreateStack(
-		middleware.Logging,
+		middleware.Logging(logger, config),
 	)
+
+	router := router.Init()
 
 	port := os.Getenv("PORT")
 	if port == "" {

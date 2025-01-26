@@ -1,15 +1,23 @@
 package service
 
-import "time"
+import (
+	"log/slog"
+	"time"
+)
 
 type TimeProviderInterface interface {
-	Now() time.Time
+	Now(timeZone string) time.Time
 }
 
 type RealTimeProvider struct{}
 
-func (rtp *RealTimeProvider) Now() time.Time {
-	return time.Now()
+func (rtp *RealTimeProvider) Now(timeZone string) time.Time {
+	loc, err := time.LoadLocation(timeZone)
+	if err != nil {
+		slog.Error("invalid time zone", "timeZone", timeZone)
+		loc, _ = time.LoadLocation("Asia/Taipei")
+	}
+	return time.Now().In(loc)
 }
 
 type Player struct {

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"math"
 	"math/rand"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/Livingpool/constants"
 	"github.com/Livingpool/service"
+	"github.com/Livingpool/utils"
 	"github.com/Livingpool/views"
 )
 
@@ -21,11 +21,11 @@ type GameHandler struct {
 	timeProvider service.TimeProviderInterface
 }
 
-func NewGameHandler(renderer views.TemplatesInterface, playerPool service.PlayerPoolInterface, timeProvider service.TimeProviderInterface) *GameHandler {
+func NewGameHandler(r views.TemplatesInterface, p service.PlayerPoolInterface, t service.TimeProviderInterface) *GameHandler {
 	return &GameHandler{
-		renderer:     renderer,
-		playerPool:   playerPool,
-		timeProvider: timeProvider,
+		renderer:     r,
+		playerPool:   p,
+		timeProvider: t,
 	}
 }
 
@@ -38,6 +38,7 @@ func (h *GameHandler) ReturnHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("reqId").(string)
 	digit, err := strconv.Atoi(r.FormValue("digit"))
 
 	// Invalid input error
@@ -86,7 +87,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 		PlayerId: newPlayer.Id,
 	}
 
-	slog.Info(fmt.Sprintf("player registered: %d", newPlayer.Id))
+	slog.Info("player registered", "reqId", reqId, "playerId", newPlayer.Id)
 
 	// Execute the template
 	h.renderer.Render(w, "game", formData)
@@ -107,7 +108,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	player, exists := h.playerPool.GetPlayer(id)
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
-		slog.Error(fmt.Sprintf("player %d doesn't exist", id))
+		slog.Error("player doesn't exist", "playerId", id)
 		return
 	}
 
@@ -150,8 +151,9 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	countB := strconv.Itoa(b)
 	result := countA + "a" + countB + "b"
 
+	timeZone := utils.GetTimeZone(utils.ReadUserIP(r))
 	row := service.ResultRow{
-		TimeStamp: h.timeProvider.Now().Format(time.DateTime),
+		TimeStamp: h.timeProvider.Now(timeZone).Format(time.TimeOnly),
 		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
 		Result:    result,
 	}
@@ -161,7 +163,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	h.renderer.Render(w, "result", player.GuessResults)
 }
 
-// Returns [lower, upper] from given digit
+// returns [lower, upper] from given digit
 func calcRange(digit int) (int, int) {
 	if digit == 1 {
 		return 0, 9
@@ -170,7 +172,7 @@ func calcRange(digit int) (int, int) {
 	return int(math.Pow(10, float64(digit-1))), upper
 }
 
-// Generate a pseudo random number with range [lower, upper]
+// generate a pseudo random number with range [lower, upper]
 func genRandInt(lower, upper int) int {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	num := r.Intn(upper-lower) + lower

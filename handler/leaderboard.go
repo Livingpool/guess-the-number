@@ -26,6 +26,7 @@ func NewLeaderboardHandler(r views.TemplatesInterface, l service.LeaderboardInte
 }
 
 func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("reqId").(string)
 	var record service.Record
 
 	dec := json.NewDecoder(r.Body)
@@ -33,7 +34,7 @@ func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) 
 
 	if err := dec.Decode(&record); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		slog.Debug(fmt.Sprintf("decode json failed: %s", err.Error()))
+		slog.Error("decode json failed", "reqId", reqId, "err", err.Error())
 		return
 	}
 
@@ -58,7 +59,7 @@ func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) 
 
 	if err := h.leaderboard.Insert(r.Context(), record); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		slog.Error(fmt.Sprintf("insert leaderboard failed: %#v", err))
+		slog.Error("insert leaderboard", "reqId", reqId, "err", err.Error())
 		return
 	}
 
@@ -67,6 +68,7 @@ func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *LeaderboardHandler) ShowLeaderboard(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("reqId").(string)
 	digit := r.URL.Query().Get("digit")
 	name := strings.TrimSpace(r.URL.Query().Get("name"))
 
@@ -86,7 +88,7 @@ func (h *LeaderboardHandler) ShowLeaderboard(w http.ResponseWriter, r *http.Requ
 	result, err := h.leaderboard.Get(r.Context(), boardId, name)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		slog.Debug(fmt.Sprintf("get leaderboard failed with id %d, %s: %v", boardId, name, err))
+		slog.Error("get leaderboard failed", "reqId", reqId, "boardId", boardId, "name", name, "err", err.Error())
 		w.Write([]byte("record not found"))
 		return
 	}
