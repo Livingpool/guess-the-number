@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/Livingpool/constants"
+	"github.com/Livingpool/middleware"
 	"github.com/Livingpool/service"
 	"github.com/Livingpool/views"
 )
@@ -26,7 +27,7 @@ func NewLeaderboardHandler(r views.TemplatesInterface, l service.LeaderboardInte
 }
 
 func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) {
-	reqId := r.Context().Value("reqId").(string)
+	reqId := r.Context().Value(middleware.RequestIdKey).(string)
 	var record service.Record
 
 	dec := json.NewDecoder(r.Body)
@@ -68,7 +69,7 @@ func (h *LeaderboardHandler) SaveRecord(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *LeaderboardHandler) ShowLeaderboard(w http.ResponseWriter, r *http.Request) {
-	reqId := r.Context().Value("reqId").(string)
+	reqId := r.Context().Value(middleware.RequestIdKey).(string)
 	digit := r.URL.Query().Get("digit")
 	name := strings.TrimSpace(r.URL.Query().Get("name"))
 

@@ -1,7 +1,5 @@
-
     <form id="form" hx-post="\new" hx-target="#form-container" hx-swap="outerHTML">
         <input 
-             
             type="text" 
             name="digit" 
             id="digit" 

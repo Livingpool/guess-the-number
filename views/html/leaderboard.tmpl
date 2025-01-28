@@ -1,0 +1,22 @@
+{{ block "leaderboard" . }}
+    {{- range ( len . | dec | slice . ) }}
+        <h2>Leaderboard [{{ .Digits }} Digits]</h2>
+    {{ end }}
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>player</th>
+                <th>attempts</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range . }}
+                <tr>
+                    <td>{{ .Name }}</td>
+                    <td>{{ .Attempts }}</td>
+                </tr>
+            {{ end }}
+        </tbody>
+    </table>
+{{ end }}

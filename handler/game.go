@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Livingpool/constants"
+	"github.com/Livingpool/middleware"
 	"github.com/Livingpool/service"
 	"github.com/Livingpool/utils"
 	"github.com/Livingpool/views"
@@ -38,7 +39,7 @@ func (h *GameHandler) ReturnHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
-	reqId := r.Context().Value("reqId").(string)
+	reqId := r.Context().Value(middleware.RequestIdKey).(string)
 	digit, err := strconv.Atoi(r.FormValue("digit"))
 
 	// Invalid input error
@@ -94,6 +95,7 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value(middleware.RequestIdKey).(string)
 	guessStr := r.URL.Query().Get("guess")
 	playerId := r.URL.Query().Get("id")
 
@@ -108,7 +110,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 	player, exists := h.playerPool.GetPlayer(id)
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
-		slog.Error("player doesn't exist", "playerId", id)
+		slog.Error("player doesn't exist", "reqId", reqId, "playerId", id)
 		return
 	}
 
