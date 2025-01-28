@@ -17,6 +17,10 @@ type LoggingConfig struct {
 	ClientErrorLevel slog.Level
 }
 
+type RequestId string
+
+const RequestIdKey RequestId = "reqId"
+
 type Middleware func(http.Handler) http.Handler
 
 func CreateStack(xs ...Middleware) Middleware {
@@ -50,7 +54,7 @@ func Logging(logger *slog.Logger, config LoggingConfig) func(http.Handler) http.
 				statusCode:     http.StatusOK,
 			}
 
-			r = r.WithContext(context.WithValue(r.Context(), "reqId", reqId))
+			r = r.WithContext(context.WithValue(r.Context(), RequestIdKey, reqId))
 
 			next.ServeHTTP(wrapped, r)
 
@@ -66,7 +70,7 @@ func Logging(logger *slog.Logger, config LoggingConfig) func(http.Handler) http.
 					r.Context(),
 					level,
 					strconv.Itoa(wrapped.statusCode),
-					slog.String("reqId", reqId),
+					slog.String(string(RequestIdKey), reqId),
 					slog.String("ip", utils.ReadUserIP(r).String()),
 					slog.String("method", r.Method),
 					slog.String("path", r.URL.Path),

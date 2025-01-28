@@ -70,12 +70,6 @@
 /* 
  * leaderboard popup
 */
-.overlay {
-    display: none;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 999;
-}
-
 .popup {
     display: none;
     position: fixed;
@@ -99,8 +93,8 @@
     margin-bottom: 20px;
 }
 
-.overlay button:hover,
-.overlay buton:focus {
+.popup button:hover,
+.popup buton:focus {
     background-color: orange;
     color: white;
     outline: none;
