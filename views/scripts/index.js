@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             addFields(digit);
         } else if (evt.detail.elt.id == 'popup-leaderboard') {
             openPopup();
+            insertIndex();
         }
     });
 
@@ -115,7 +116,7 @@ async function notifyResult(ans) {
         const digit = parseInt(
             document.getElementById('form-container').getAttribute('data-digit')
         );
-        const attempts = document.getElementById('table').rows.length;
+        const attempts = document.getElementById('tbody').rows.length;
 
         fetch(window.location.origin + '/save-record', {
             method: 'POST',

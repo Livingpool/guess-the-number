@@ -54,3 +54,5 @@ A player will automatically be removed from the pool after some time of inactivi
 - more comprehensive logging (inspired by [ slog-http ](https://github.com/samber/slog-http))
 - replace mocking with unit + integration tests only
 - pull out db layer from service layer (follows previous)
+- some caching?
+- css transitions when showing leaderboard

@@ -1,6 +1,13 @@
 {{ block "leaderboard" . }}
     {{- range ( len . | dec | slice . ) }}
-        <h2>Leaderboard [{{ .Digits }} Digits]</h2>
+        <h2>
+            <span style="color: forestgreen">Leader</span
+            ><span style="color: skyblue">board</span> [<span
+                style="color: orange"
+                >{{ .Digits }}</span
+            >
+            Digits]
+        </h2>
     {{ end }}
     <table>
         <thead>
