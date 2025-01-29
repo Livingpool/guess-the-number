@@ -7,3 +7,8 @@ gha-creds-*.json
 
 # sqlite3
 *.db
+
+# cus im using prettier-go-template
+node_modules/*
+package-lock.json
+package.json
