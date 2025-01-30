@@ -1,7 +1,5 @@
 function insertIndex() {
-    const bodySection = document
-        .getElementById('popup-leaderboard')
-        .querySelectorAll('tbody')[0];
+    const bodySection = document.getElementById('leaderboard-tbody');
     const name = document.getElementById('form-container').getAttribute('name');
 
     for (let i = 0; i < bodySection.rows.length; i++) {

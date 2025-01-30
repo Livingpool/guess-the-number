@@ -5,8 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"math"
+	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 
 	"github.com/Livingpool/constants"
 )
@@ -28,7 +29,8 @@ type Record struct {
 }
 
 func NewLeaderboard() *Leaderboard {
-	db, err := sql.Open("sqlite3", "./leaderboards.db")
+	url := os.Getenv("TURSO_DATABASE_URL") + "?authToken=" + os.Getenv("TURSO_AUTH_TOKEN")
+	db, err := sql.Open("libsql", url)
 	if err != nil {
 		panic(err)
 	}

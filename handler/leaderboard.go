@@ -94,5 +94,7 @@ func (h *LeaderboardHandler) ShowLeaderboard(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	h.renderer.Render(w, "leaderboard", result)
+	if err := h.renderer.Render(w, "leaderboard", result); err != nil {
+		slog.Error("render leaderboard error", "err", err.Error())
+	}
 }

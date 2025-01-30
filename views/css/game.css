@@ -133,6 +133,7 @@
     background-color: orange;
     color: white;
     outline: none;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 600px) {

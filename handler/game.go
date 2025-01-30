@@ -90,8 +90,9 @@ func (h *GameHandler) NewGame(w http.ResponseWriter, r *http.Request) {
 
 	slog.Info("player registered", "reqId", reqId, "playerId", newPlayer.Id)
 
-	// Execute the template
-	h.renderer.Render(w, "game", formData)
+	if err := h.renderer.Render(w, "game", formData); err != nil {
+		slog.Error("render game error", "err", err.Error())
+	}
 }
 
 func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
@@ -162,7 +163,9 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 
 	player.GuessResults.Rows = append([]service.ResultRow{row}, player.GuessResults.Rows...)
 
-	h.renderer.Render(w, "result", player.GuessResults)
+	if err := h.renderer.Render(w, "result", player.GuessResults); err != nil {
+		slog.Error("render game error", "err", err.Error())
+	}
 }
 
 // returns [lower, upper] from given digit

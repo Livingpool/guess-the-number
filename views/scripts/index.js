@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     .getAttribute('data-digit')
             );
             addFields(digit);
-        } else if (evt.detail.elt.id == 'popup-leaderboard') {
+        } else if (evt.detail.elt.id == 'leaderboard-tbody') {
             openPopup();
             insertIndex();
         }

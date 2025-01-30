@@ -47,14 +47,33 @@
             <button
                 id="leaderboard-btn"
                 hx-get="/show-board"
-                hx-target="#popup-leaderboard"
+                hx-target="#leaderboard-tbody"
             >
                 leaderboard
             </button>
         </div>
 
         <div id="overlay-leaderboard" class="overlay">
-            <div id="popup-leaderboard" class="popup"></div>
+            <div id="popup-leaderboard" class="popup">
+                <h2>
+                    <span style="color: forestgreen">Leader</span
+                    ><span style="color: skyblue">board</span> [<span
+                        style="color: orange"
+                        >{{ .Digit }}</span
+                    >
+                    Digits]
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>player</th>
+                            <th>attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody"></tbody>
+                </table>
+            </div>
             <button id="close-leaderboard-btn" onclick="closePopup()">
                 close
             </button>
