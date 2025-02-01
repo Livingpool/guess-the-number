@@ -122,18 +122,35 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	result := genHint(guessStr, player.Answer)
+	timeZone := utils.GetTimeZone(utils.ReadUserIP(r))
+
+	row := service.ResultRow{
+		TimeStamp: h.timeProvider.Now(timeZone).Format(time.TimeOnly),
+		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
+		Result:    result,
+	}
+
+	player.GuessResults.Rows = append([]service.ResultRow{row}, player.GuessResults.Rows...)
+
+	if err := h.renderer.Render(w, "result", player.GuessResults); err != nil {
+		slog.Error("render game error", "err", err.Error())
+	}
+}
+
+func genHint(guess, answer string) string {
 	a, b := 0, 0
-	aMap := make([]bool, len(guessStr)) // positions of a's
-	countMap := make([]int, 10)         // occurences of chars (for calc b's)
+	aMap := make([]bool, len(guess)) // positions of a's
+	countMap := make([]int, 10)      // occurences of chars (for calc b's)
 
 	for i := range 10 {
-		countMap[i] = strings.Count(player.Answer, strconv.Itoa(i))
+		countMap[i] = strings.Count(answer, strconv.Itoa(i))
 	}
 
 	// log.Println(guessStr, player.Answer)
-	for i := 0; i < len(guessStr); i++ {
-		c, _ := strconv.Atoi(string(guessStr[i]))
-		if guessStr[i] == player.Answer[i] {
+	for i := 0; i < len(guess); i++ {
+		c, _ := strconv.Atoi(string(guess[i]))
+		if guess[i] == answer[i] {
 			if countMap[c] <= 0 {
 				b--
 				a++
@@ -152,20 +169,7 @@ func (h *GameHandler) CheckGuess(w http.ResponseWriter, r *http.Request) {
 
 	countA := strconv.Itoa(a)
 	countB := strconv.Itoa(b)
-	result := countA + "a" + countB + "b"
-
-	timeZone := utils.GetTimeZone(utils.ReadUserIP(r))
-	row := service.ResultRow{
-		TimeStamp: h.timeProvider.Now(timeZone).Format(time.TimeOnly),
-		Guess:     "#" + strconv.Itoa(len(player.GuessResults.Rows)+1) + ": " + guessStr,
-		Result:    result,
-	}
-
-	player.GuessResults.Rows = append([]service.ResultRow{row}, player.GuessResults.Rows...)
-
-	if err := h.renderer.Render(w, "result", player.GuessResults); err != nil {
-		slog.Error("render game error", "err", err.Error())
-	}
+	return countA + "a" + countB + "b"
 }
 
 // returns [lower, upper] from given digit
